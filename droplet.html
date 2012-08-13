@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="droplet.css" type="text/css" />
+<style type="text/css">
+:-moz-drag-over {
+	background-color: #ff0 !important;
+}
+</style>
+</head>
+<body>
+
+<form id="form" action="/test/files2.php" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="name" value="value" />
+	<input type="text" name="moo" value="baa" />
+	<input id="f" type="file" name="upload[]" multiple="" />
+	<input type="submit" value="Upload" />
+</form>
+
+<div id="zone" style="background-color: #ccc; width: 500px; height: 300px; float: right;"></div>
+
+<div id="output" style="white-space: pre-wrap"></div>
+
+<script type="text/javascript" src="../extend/extend.js"></script>
+<script type="text/javascript" src="droplet.js"></script>
+<script type="text/javascript">
+Droplet.maxWidth = Droplet.maxHeight = 800;
+Droplet.threshold = 0.9;
+Droplet.zones = [$('zone')];
+Droplet.form = $('form');
+Droplet.uploadComplete = function (req) {
+	$('output').textContent = req.responseText;
+};
+
+</script>
+
+</body>
+</html>
