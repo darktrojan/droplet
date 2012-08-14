@@ -21,15 +21,15 @@
 
 <div id="output" style="white-space: pre-wrap"></div>
 
-<script type="text/javascript" src="../extend/extend.js"></script>
 <script type="text/javascript" src="droplet.js"></script>
 <script type="text/javascript">
+
 Droplet.maxWidth = Droplet.maxHeight = 800;
 Droplet.threshold = 0.9;
-Droplet.zones = [$('zone')];
-Droplet.form = $('form');
+Droplet.zones = [document.getElementById('zone')];
+Droplet.form = document.getElementById('form');
 Droplet.uploadComplete = function (req) {
-	$('output').textContent = req.responseText;
+	document.getElementById('output').textContent = req.responseText;
 };
 
 </script>

@@ -4,6 +4,18 @@ var Droplet = {
 	threshold: 1,
 	zones: [document.documentElement],
 	form: null,
+	onload: function() {
+		if (window.removeEventListener) {
+			window.removeEventListener('DOMContentLoaded', Droplet.onload, false);
+			window.removeEventListener('load', Droplet.onload, false);
+		} else {
+			if (document.readyState != "complete")
+				return;
+			document.onreadystatechange = null;
+			window.detachEvent('onload', Droplet.onload);
+		}
+		Droplet.init();
+	},
 	init: function() {
 		if ('FormData' in window && 'FileReader' in window) {
 			var self = this;
@@ -206,42 +218,36 @@ var Droplet = {
 		init: function() {
 			var self = this;
 
-			this.element = $e(document.body, 'div', null, { id: 'droplet-notification' });
-			this.element.style.visibility = 'hidden';
+			this.element = document.createElement('div');
+			this.element.id = 'droplet-notification';
+			this.element.innerHTML =
+				'<div id="droplet-title">Uploading…</div>' +
+				'<div id="droplet-filenames"></div>' +
+				'<div id="droplet-progressbar"><div id="droplet-progress"></div></div>';
+			document.body.appendChild(this.element);
 
-			this.title = $e(this.element, 'div', 'Uploading\u2026', { style: 'font-weight: bold;' });
-			this.filename = $e(this.element, 'div', null, { style: 'margin: 5px 0; line-height: 150%;' });
-			this.bar = $e(this.element, 'div', null, { id: 'droplet-progressbar' });
-			this.progress = $e(this.bar, 'div', null, { id: 'droplet-progress' });
-			this.transitionEvent;
-
-			if ('MozTransition' in this.element.style)
-				this.transitionEvent = 'transitionend';
-			else if ('WebkitTransition' in this.element.style)
-				this.transitionEvent = 'webkitTransitionEnd';
-			else if ('OTransition' in this.element.style)
-				this.transitionEvent = 'oTransitionEnd';
-			if (this.transitionEvent) {
-				this.element.addEventListener(this.transitionEvent, function(event) {
-					if (event.target == this && !$cnc(this, 'visible')) {
-						this.style.visibility = 'hidden';
-						self.progress.style.width = 0;
-					}
-				}, false);
-			}
+			this.filenames = document.getElementById('droplet-filenames');
+			this.progress = document.getElementById('droplet-progress');
 		},
 		setValue: function(value) {
 			this.progress.style.width = Math.floor(value) + '%';
 		},
 		show: function(filenames) {
-			this.filename.innerHTML = filenames.join('<br />');
-			this.element.style.visibility = 'visible';
-			$cna(this.element, 'visible');
+			this.progress.style.width = 0;
+			while (this.filenames.lastChild)
+				this.filenames.removeChild(this.filenames.lastChild);
+
+			for (var i = 0; i < filenames.length; i++) {
+				var div = document.createElement('div');
+				div.appendChild(document.createTextNode(filenames[i]));
+				this.filenames.appendChild(div);
+			}
+			this.element.classList.add('visible');
 		},
 		hide: function() {
 			var self = this;
 			setTimeout(function() {
-				$cnr(self.element, 'visible');
+				self.element.classList.remove('visible');
 			}, 1000);
 			setTimeout(function() {
 				self.progress.style.width = 0;
@@ -250,4 +256,10 @@ var Droplet = {
 	}
 };
 
-_loadList.push(function() { Droplet.init() });
+if (window.addEventListener) {
+	window.addEventListener('DOMContentLoaded', Droplet.onload, false);
+	window.addEventListener('load', Droplet.onload, false);
+} else {
+	document.onreadystatechange = Droplet.onload;
+	window.attachEvent('onload', Droplet.onload);
+}

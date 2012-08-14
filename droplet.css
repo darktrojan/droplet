@@ -10,16 +10,30 @@
 	text-align: left;
 	font-size: 15px;
 	line-height: 15px;
+	visibility: hidden;
 	opacity: 0;
 	z-index: 502;
-		-moz-transition: opacity 750ms ease;
-		-ms-transition: opacity 750ms ease;
-		-o-transition: opacity 750ms ease;
-		-webkit-transition: opacity 750ms ease;
-	transition: opacity 750ms ease;
+		-moz-transition: opacity 750ms, visibility 0ms 750ms;
+		-ms-transition: opacity 750ms, visibility 0ms 750ms;
+		-o-transition: opacity 750ms, visibility 0ms 750ms;
+		-webkit-transition: opacity 750ms, visibility 0ms 750ms;
+	transition: opacity 750ms, visibility 0ms 750ms;
 }
 #droplet-notification.visible {
+	visibility: visible;
 	opacity: 1;
+		-moz-transition: opacity 750ms;
+		-ms-transition: opacity 750ms;
+		-o-transition: opacity 750ms;
+		-webkit-transition: opacity 750ms;
+	transition: opacity 750ms;
+}
+#droplet-title {
+	font-weight: bold;
+}
+#droplet-filenames {
+	margin: 5px 0;
+	line-height: 150%;
 }
 #droplet-progressbar {
 	background-color: #fff;
