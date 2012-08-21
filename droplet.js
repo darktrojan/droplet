@@ -155,9 +155,9 @@ var Droplet = {
 				}
 
 				names.push(file.name);
-				if ('toBlob' in canvas) {
+				if ('toBlob' in canvas || 'msToBlob' in canvas) {
 					// console.log('canvas.toBlob');
-					canvas.toBlob(function(blob) {
+					(canvas.toBlob || canvas.msToBlob)(function(blob) {
 						items.push(blob);
 						checkSend();
 					}, file.type);
