@@ -8,11 +8,6 @@ var Droplet = {
 		if (window.removeEventListener) {
 			window.removeEventListener('DOMContentLoaded', Droplet.onload, false);
 			window.removeEventListener('load', Droplet.onload, false);
-		} else {
-			if (document.readyState != "complete")
-				return;
-			document.onreadystatechange = null;
-			window.detachEvent('onload', Droplet.onload);
 		}
 		Droplet.init();
 	},
@@ -259,7 +254,4 @@ var Droplet = {
 if (window.addEventListener) {
 	window.addEventListener('DOMContentLoaded', Droplet.onload, false);
 	window.addEventListener('load', Droplet.onload, false);
-} else {
-	document.onreadystatechange = Droplet.onload;
-	window.attachEvent('onload', Droplet.onload);
 }
