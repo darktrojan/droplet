@@ -134,6 +134,9 @@ var Droplet = {
 				if ('URL' in window) {
 					// console.log('URL.revokeObjectURL');
 					URL.revokeObjectURL(file);
+				} else if ('webkitURL' in window) {
+					// console.log('webkitURL.revokeObjectURL');
+					webkitURL.revokeObjectURL(file);
 				}
 
 				var ratio = Math.min(Droplet.maxWidth / image.width, Droplet.maxHeight / image.height);
@@ -187,6 +190,9 @@ var Droplet = {
 			if ('URL' in window) {
 				// console.log('URL.createObjectURL');
 				image.src = URL.createObjectURL(file);
+			} else if ('webkitURL' in window) {
+				// console.log('webkitURL.createObjectURL');
+				image.src = webkitURL.createObjectURL(file);
 			} else {
 				// console.log('FileReader.readAsDataURL');
 				var reader = new FileReader();
