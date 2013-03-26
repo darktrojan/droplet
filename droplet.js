@@ -63,10 +63,12 @@ var Droplet = {
 			var files = [];
 			var inputs = this.form.querySelectorAll('input[type="file"]');
 			for (var i = 0; i < inputs.length; i++) {
-				for (var j = 0; j < inputs[i].files.length; j++) {
-					files.push(inputs[i].files[j]);
+				var input = inputs[i];
+				for (var j = 0; j < input.files.length; j++) {
+					files.push(input.files[j]);
 				}
-				inputs[i].value = '';
+				input.value = '';
+				input.parentNode.replaceChild(input.cloneNode(), input);
 			}
 			this.uploadFiles(files);
 			return false;
@@ -133,10 +135,10 @@ var Droplet = {
 			image.onload = function() {
 				if ('URL' in window) {
 					// console.log('URL.revokeObjectURL');
-					URL.revokeObjectURL(file);
+					URL.revokeObjectURL(this.src);
 				} else if ('webkitURL' in window) {
 					// console.log('webkitURL.revokeObjectURL');
-					webkitURL.revokeObjectURL(file);
+					webkitURL.revokeObjectURL(this.src);
 				}
 
 				var ratio = Math.min(Droplet.maxWidth / image.width, Droplet.maxHeight / image.height);
@@ -153,14 +155,12 @@ var Droplet = {
 				}
 
 				names.push(file.name);
-				if ('toBlob' in canvas || 'msToBlob' in canvas) {
-					// console.log('canvas.toBlob');
-					(canvas.toBlob || canvas.msToBlob)(function(blob) {
-						items.push(blob);
-						checkSend();
-					}, file.type);
-					return;
-				} else if ('mozGetAsFile' in canvas) {
+				// if ('msToBlob' in canvas) {
+				// 	console.log('canvas.msToBlob');
+				// 	var blob = canvas.msToBlob(file.type);
+				// 	items.push(blob);
+				// } else
+				if ('mozGetAsFile' in canvas) {
 					// console.log('canvas.mozGetAsFile');
 					items.push(canvas.mozGetAsFile(file.name, file.type));
 				} else {
