@@ -21,4 +21,8 @@ Image Resizer
 Droplet can reduce PNG or JPEG files before upload to save upload time. To use this feature, set a maximum width and height for images. If you set a threshold, images won't be scaled if the size of the reduction is greater than the threshold (in this case if they're already smaller than `800/0.9=889px`).
 
 	Droplet.maxWidth = Droplet.maxHeight = 800;
-	Droplet.threshold = 0.9;
+	Droplet.threshold = 0.9; // default is 1.0
+
+Droplet can also encode JPEG at different qualities to further reduce upload time (this is not supported in all browsers).
+
+	Droplet.quality = 0.5; // between 0.0 and 1.0, default is 0.8
