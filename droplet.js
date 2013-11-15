@@ -2,6 +2,7 @@ var Droplet = {
 	maxHeight: 0,
 	maxWidth: 0,
 	threshold: 1,
+	quality: 0.8,
 	zones: [document.documentElement],
 	form: null,
 	onload: function() {
@@ -164,13 +165,13 @@ var Droplet = {
 					// console.log('canvas.toBlob');
 					canvas.toBlob(function(blob) {
 						addItem(file.name, blob);
-					}, file.type);
+					}, file.type, Droplet.quality);
 				} else if ('mozGetAsFile' in canvas) {
 					// console.log('canvas.mozGetAsFile');
 					addItem(file.name, canvas.mozGetAsFile(file.name, file.type));
 				} else {
 
-					var dataURL = canvas.toDataURL(file.type);
+					var dataURL = canvas.toDataURL(file.type, Droplet.quality);
 					var byteString = atob(dataURL.split(',')[1]);
 
 					var ab = new ArrayBuffer(byteString.length);
