@@ -110,6 +110,12 @@ var Droplet = {
 			}
 		};
 
+		function addItem(name, item) {
+			names.push(name);
+			items.push(item);
+			checkSend();
+		}
+
 		function checkSend() {
 			// console.debug('checkSend: ' + items.length + '/' + total);
 			if (items.length < total)
@@ -154,15 +160,14 @@ var Droplet = {
 					context.drawImage(image, 0, 0, image.width * ratio, image.height * ratio);
 				}
 
-				names.push(file.name);
-				// if ('msToBlob' in canvas) {
-				// 	console.log('canvas.msToBlob');
-				// 	var blob = canvas.msToBlob(file.type);
-				// 	items.push(blob);
-				// } else
-				if ('mozGetAsFile' in canvas) {
+				if ('toBlob' in canvas) {
+					// console.log('canvas.toBlob');
+					canvas.toBlob(function(blob) {
+						addItem(file.name, blob);
+					}, file.type);
+				} else if ('mozGetAsFile' in canvas) {
 					// console.log('canvas.mozGetAsFile');
-					items.push(canvas.mozGetAsFile(file.name, file.type));
+					addItem(file.name, canvas.mozGetAsFile(file.name, file.type));
 				} else {
 
 					var dataURL = canvas.toDataURL(file.type);
@@ -176,16 +181,14 @@ var Droplet = {
 
 					if ('Blob' in window) {
 						// console.log('canvas.toDataURL used with Blob constructor');
-						var b = new Blob([ia]);
-						items.push(b);
+						addItem(file.name, new Blob([ia]));
 					} else {
 						// console.log('canvas.toDataURL used with BlobBuilder');
 						var bb = 'BlobBuilder' in window ? new BlobBuilder() : new WebKitBlobBuilder();
 						bb.append(ia);
-						items.push(bb.getBlob(file.type));
+						addItem(file.name, bb.getBlob(file.type));
 					}
 				}
-				checkSend();
 			}
 			if ('URL' in window) {
 				// console.log('URL.createObjectURL');
