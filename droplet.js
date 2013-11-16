@@ -124,7 +124,8 @@ var Droplet = {
 
 			var data = new FormData(self.form);
 			for (var i = 0; i < total; i++) {
-				data.append('upload[]', items[i]);
+				data.append('upload[' + i + ']', items[i]);
+				data.append('upload_names[' + i + ']', names[i]);
 			}
 
 			self.notification.show(names);
