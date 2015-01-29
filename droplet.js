@@ -112,6 +112,12 @@ var Droplet = {
 		};
 
 		function addItem(name, item) {
+			try {
+				item = new File([item], name, {'type': item.type});
+				// console.debug('Used File constructor');
+			} catch(ex) {
+				// console.error('File constructor failed');
+			}
 			names.push(name);
 			items.push(item);
 			checkSend();
@@ -130,22 +136,22 @@ var Droplet = {
 
 			self.notification.show(names);
 			xhr.send(data);
-			// console.log('sent');
+			// console.debug('sent');
 		}
 
 		function resize(file) {
 			// console.debug('resize: ' + file.name);
 			if (!self.maxWidth || !self.maxHeight || (file.type != 'image/jpeg' && file.type != 'image/png')) {
-				// console.log(file.name + ' was not resized');
+				// console.debug(file.name + ' was not resized');
 				return false;
 			}
 			var image = document.createElement('img');
 			image.onload = function() {
 				if ('URL' in window) {
-					// console.log('URL.revokeObjectURL');
+					// console.debug('URL.revokeObjectURL');
 					URL.revokeObjectURL(this.src);
 				} else if ('webkitURL' in window) {
-					// console.log('webkitURL.revokeObjectURL');
+					// console.debug('webkitURL.revokeObjectURL');
 					webkitURL.revokeObjectURL(this.src);
 				}
 
@@ -163,12 +169,12 @@ var Droplet = {
 				}
 
 				if ('toBlob' in canvas) {
-					// console.log('canvas.toBlob');
+					// console.debug('canvas.toBlob');
 					canvas.toBlob(function(blob) {
 						addItem(file.name, blob);
 					}, file.type, Droplet.quality);
 				} else if ('mozGetAsFile' in canvas) {
-					// console.log('canvas.mozGetAsFile');
+					// console.debug('canvas.mozGetAsFile');
 					addItem(file.name, canvas.mozGetAsFile(file.name, file.type));
 				} else {
 
@@ -182,10 +188,10 @@ var Droplet = {
 					}
 
 					if ('Blob' in window) {
-						// console.log('canvas.toDataURL used with Blob constructor');
+						// console.debug('canvas.toDataURL used with Blob constructor');
 						addItem(file.name, new Blob([ia]));
 					} else {
-						// console.log('canvas.toDataURL used with BlobBuilder');
+						// console.debug('canvas.toDataURL used with BlobBuilder');
 						var bb = 'BlobBuilder' in window ? new BlobBuilder() : new WebKitBlobBuilder();
 						bb.append(ia);
 						addItem(file.name, bb.getBlob(file.type));
@@ -193,13 +199,13 @@ var Droplet = {
 				}
 			}
 			if ('URL' in window) {
-				// console.log('URL.createObjectURL');
+				// console.debug('URL.createObjectURL');
 				image.src = URL.createObjectURL(file);
 			} else if ('webkitURL' in window) {
-				// console.log('webkitURL.createObjectURL');
+				// console.debug('webkitURL.createObjectURL');
 				image.src = webkitURL.createObjectURL(file);
 			} else {
-				// console.log('FileReader.readAsDataURL');
+				// console.debug('FileReader.readAsDataURL');
 				var reader = new FileReader();
 				reader.onload = function() {
 					image.src = this.result;
@@ -210,14 +216,14 @@ var Droplet = {
 			return true;
 		}
 
-		// console.log('starting resize');
+		// console.debug('starting resize');
 		for (var i = 0; i < total; i++) {
 			if (!resize(files[i])) {
 				items.push(files[i]);
 				names.push(files[i].name);
 			}
 		}
-		// console.log('all resize operations started');
+		// console.debug('all resize operations started');
 		checkSend();
 	},
 	notification: {
