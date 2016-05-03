@@ -1,3 +1,4 @@
+/* globals Uint8Array, ArrayBuffer */
 var Droplet = {
 	maxHeight: 0,
 	maxWidth: 0,
@@ -115,7 +116,7 @@ var Droplet = {
 			try {
 				item = new File([item], name, {'type': item.type});
 				// console.debug('Used File constructor');
-			} catch(ex) {
+			} catch (ex) {
 				// console.error('File constructor failed');
 			}
 			names.push(name);
@@ -147,13 +148,7 @@ var Droplet = {
 			}
 			var image = document.createElement('img');
 			image.onload = function() {
-				if ('URL' in window) {
-					// console.debug('URL.revokeObjectURL');
-					URL.revokeObjectURL(this.src);
-				} else if ('webkitURL' in window) {
-					// console.debug('webkitURL.revokeObjectURL');
-					webkitURL.revokeObjectURL(this.src);
-				}
+				URL.revokeObjectURL(this.src);
 
 				var ratio = Math.min(Droplet.maxWidth / image.width, Droplet.maxHeight / image.height);
 				var canvas = document.createElement('canvas');
@@ -177,7 +172,7 @@ var Droplet = {
 					// console.debug('canvas.mozGetAsFile');
 					addItem(file.name, canvas.mozGetAsFile(file.name, file.type));
 				} else {
-
+					// console.debug('canvas.toDataURL');
 					var dataURL = canvas.toDataURL(file.type, Droplet.quality);
 					var byteString = atob(dataURL.split(',')[1]);
 
@@ -187,32 +182,11 @@ var Droplet = {
 						ia[i] = byteString.charCodeAt(i);
 					}
 
-					if ('Blob' in window) {
-						// console.debug('canvas.toDataURL used with Blob constructor');
-						addItem(file.name, new Blob([ia]));
-					} else {
-						// console.debug('canvas.toDataURL used with BlobBuilder');
-						var bb = 'BlobBuilder' in window ? new BlobBuilder() : new WebKitBlobBuilder();
-						bb.append(ia);
-						addItem(file.name, bb.getBlob(file.type));
-					}
+					addItem(file.name, new Blob([ia]));
 				}
-			}
-			if ('URL' in window) {
-				// console.debug('URL.createObjectURL');
-				image.src = URL.createObjectURL(file);
-			} else if ('webkitURL' in window) {
-				// console.debug('webkitURL.createObjectURL');
-				image.src = webkitURL.createObjectURL(file);
-			} else {
-				// console.debug('FileReader.readAsDataURL');
-				var reader = new FileReader();
-				reader.onload = function() {
-					image.src = this.result;
-				}
-				reader.name = file.name;
-				reader.readAsDataURL(file);
-			}
+			};
+
+			image.src = URL.createObjectURL(file);
 			return true;
 		}
 
@@ -228,8 +202,6 @@ var Droplet = {
 	},
 	notification: {
 		init: function() {
-			var self = this;
-
 			this.element = document.createElement('div');
 			this.element.id = 'droplet-notification';
 			this.element.innerHTML =
